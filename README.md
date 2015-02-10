@@ -142,7 +142,7 @@ daemon autoipcfg
 
 ```
 
-After the script is Ethernet1 on switchA will read:
+After the script has completed Ethernet1 on switchA will read:
 
 ```
       Interface Etherenet1
