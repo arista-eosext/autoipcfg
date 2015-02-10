@@ -53,14 +53,14 @@
    for the configuration to take place.
 
    INSTALLATION
-     tar -xvf autoipcfg.tar.gz
-     cd autoipcfg
+     You can find the source zip file at: https://github.com/arista-eosext/autoipcfg/archive/master.zip
+     once the package is extracted you can run the following command:
      python setup.py install
 
-   This will install the script in the /usr/bin/ directory.  To test that it installed 
-   successfully you can run /usr/bin/autoipcfg -h and should see the following output:
+     To test if the script is installed successfully you can run /usr/bin/autoipcfg -h 
+     and should see the following output:
 
-   usage: autoipcfg [-h] [--node NODE] [--delim DELIM] [--interval INTERVAL]
+     usage: autoipcfg [-h] [--node NODE] [--delim DELIM] [--interval INTERVAL]
                    [--no_syslog] [--config CONFIGFILE]
 
                    Automatically configure IP address via LLDP neighbor information
@@ -177,6 +177,13 @@ def run():
       print >>sys.stderr, '%s not found in config file ' % nodeToConnect
       sys.exit(-1)
    
+   '''
+   the pyeapi library will return a Node object when you pass the connect_to
+   method a string that can be found in the pyeapi configuration file.  See
+   more details on setting up the pyeapi configuration file at:
+   https://github.com/arista-eosplus/pyeapi
+   
+   '''
    node = pyeapi.connect_to(nodeToConnect)
    while True:
        try:
@@ -190,14 +197,21 @@ def run():
        for k, v in neighbors.iteritems():
           if v:
               try:
-                 #determine grab current IP, if one is configured
-                 
+                 '''
+                 grab current IP, if one is configured.  The goal is is to see if actually need
+                 to configure anything
+                 '''
                  currentIp = node.enable(['show ip %s' % k])[0]['result']['interfaces'][k.split()[1]]['interfaceAddress']['primaryIp']['address']
               except pyeapi.eapilib.CommandError:
                  #looks like this port is a L2 port so we can just continue
                  currentIp = None
                  pass
-              #only configure if the ip is not already configured
+              ''' 
+              only configure if the ip if is not already configured.  This is mainly just to 
+              save on syslog entries reporting the eapi user configuring interfaces every 
+              interval as putting the same ip on the interface over and over again should 
+              essentially be a no-op
+              '''
               if currentIp is None or currentIp != v.split('/')[0]:
                  try:
                     node.config(['%s' % k,'no switchport', 'ip address %s' % v])
