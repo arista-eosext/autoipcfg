@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: autoipcfg
+Version: 0.1.1
+Summary: Automatically configure IP interfaces based on LLDP
+Home-page: https://github.com/arista-eosplus/autoipcfg
+Author: Arista ECS
+Author-email: eosplus-dev@aristanetworks.com
+License: BSD-3
+Download-URL: https://github.com/arista-eosplus/autoipcfg/tarball/v0.1.0
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires: pyeapi
