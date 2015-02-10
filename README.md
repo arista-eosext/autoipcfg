@@ -109,11 +109,8 @@ This is example we have switchA connected to switchB via ports Ethernet1 and Eth
 ####Switch B
 * Using https as a eAPI transport protocol
 * User authenticated via an authentication server (config not shown)
-* Using
-* notifications from the script will be sent to the /var/log/messages file.  You can see the messages using the following command:
-* ```
-* switchA#bash sudo cat /var/log/messages | grep 'AUTOIPCFG\|pyeapi'a "*" as the delimiter
-* custom eapi config location
+* Using "*" as the delimiter
+* Custom eapi config location
 * Running script every 5 seconds
 
 switchA(Eternet1)------(Ethernet2>)switchB.
@@ -134,14 +131,34 @@ daemon autoipcfg
 ```
 Relevant configuration on switchB:
 ```
-Interface Etherenet1
-     description link to switchA:1.1.1.2/30
+Interface Etherenet2
+     description link to switchA:1.1.1.1/30
 
 management api http-commands
       no shutdown
 
 daemon autoipcfg
      command /usr/bin/autoipcfg --interval 5 --node switchB --delim * --config /mnt/flash/custom_eapi.conf
+
+```
+
+After the script is Ethernet1 on switchA will read:
+
+```
+      Interface Etherenet1
+           description link to switchB*1.1.1.2/30
+           no switchport
+           ip address 1.1.1.1/30
+
+```
+
+Ethernet2 on switchB will read:
+
+```
+      Interface Etherenet2
+         description link to switchA:1.1.1.1/30
+         no switchport
+         ip address 1.1.1.2/30
 
 ```
 
